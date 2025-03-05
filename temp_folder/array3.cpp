@@ -429,21 +429,60 @@ void largestsubarayzeroSum_Better(vector<int> &arr,int n){
     cout<<"The length of largest sum "<<maxi<<endl;
 }
 
-/*
-Optimal Approach :
 
+
+// Question 6
+/*
+Brute Force Approach : Generates all the subarray's which meets the target and return the number of subarrays.
 */
-void largestsubarrayzeroSum_Optimal(vector<int> &arr,int n){
-    int maxi = 0;
-    int xor = 0;
+void xor_Brute(vector<int>& arr,int n,int b){
+    int cnt = 0;
     for(int i = 0; i < n; i++){
-        xor = 0;
         for(int j = i; j < n; j++){
-            xor^=arr[j];
-            if(xor == k) maxi++;
+            int Xxor = 0;
+            for(int k = i; k <= j; k++){
+                Xxor= Xxor ^ arr[k];
+            }
+            if(Xxor == b) cnt++;
         }
     }
-    cout<<"The The length of largest sum "<<maxi<<endl;
+    cout<<cnt;
+}
+
+// Better Solution : Time complexity : O(n2) and Space Complexity : O(1)
+void xor_BetterSolution(vector<int>& arr,int n,int b){
+    int cnt = 0; 
+    for(int i = 0; i < n; i++){
+        int Xxor = 0;
+        for(int j = i; j < n; j++){
+            Xxor = Xxor ^ arr[j];
+            if(Xxor == b) cnt++;
+        }
+    }
+    cout<<cnt;
+}
+
+/* Optimal Solution : In this approach we use the concept of prefix xor . Lets assume that the prefix xor of a subarray ending 
+at index i is 'xr' . In that subarray we will search for another subarray ending at index i , whose xor is equal to the target value
+. Here we need to observe that if there exist another subarray ending at index i with xor k , then the prefix xor of the rest of the subarray
+will be the target value.
+
+Time complexity : O(n2) 
+Space Complexity : O(n)
+
+*/
+void xor_OptimalSolution(vector<int>& arr,int n,int b){
+    unordered_map<int,int> mpp;
+    int xr = 0; 
+    int cnt = 0;
+    mpp[xr]++;
+    for(int i = 0; i < n; i++){
+        xr^=arr[i];
+        int x=xr^b;
+        cnt+=mpp[x];
+        mpp[xr]++;
+    }
+    cout<<cnt;
 }
 int main(){
     /*
@@ -515,7 +554,7 @@ fourSum_Better(arr,n,target);
 
 //Optimal one
 fourSum_Optimal(arr,n,target);
-*/
+
 
 // 5.Largest Subarray with 0 sum 
 vector<int> arr = {15,-2,2,-8,1,7,10,23};  // Output 5 -2 2 -8 1 7 
@@ -524,10 +563,22 @@ largestsubarayzeroSum_Brute(arr,n);
 
 // Better Solution 
 largestsubarayzeroSum_Better(arr,n);
-// Optimal Solution
-largestsubarrayzeroSum_Optimal(arr,n);
+*/
 
+// 6.Subarray with given xor 
+/*
+Given an array of interger A and an integer B . Find the total number of subarray bitwise xor of all elements equals to B
+*/
+vector<int> arr = {4,2,2,6,4};
+int n = arr.size();
+int b = 6;
+xor_Brute(arr,n,b);
 
+// Better Solution 
+xor_BetterSolution(arr,n,b);
+
+// Optimal Solution 
+xor_OptimalSolution(arr,n,b);
 
 
     return 0;
